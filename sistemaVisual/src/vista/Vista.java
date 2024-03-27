@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.JTable;
 import java.awt.BorderLayout;
@@ -14,6 +15,9 @@ import java.awt.Panel;
 import java.awt.FlowLayout;
 import java.awt.ScrollPane;
 import java.awt.Scrollbar;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.Point;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
@@ -22,6 +26,10 @@ import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
+import javax.swing.JButton;
+
+import modelo.Productos;
+import controlador.Controlador;
 
 public class Vista {
 
@@ -31,29 +39,77 @@ public class Vista {
 	private JTextField TextNombre;
 	private JTextField TextCantidad;
 	private JTextField TextPrecio;
+	private JTextArea TextDescripcion;
+	private JRadioButton ButtonExento;
+	private JButton ButtonLimpiar;
+	private JButton BotonCrear;
+	private Controlador controlador;
+	
+	public String getCodigo() {
+        return TextCodigo.getText();
+    }
 
+    public String getNombre() {
+        return TextNombre.getText();
+    }
+
+    public int getCantidad() {
+        return Integer.parseInt(TextCantidad.getText());
+    }
+
+    public double getPrecio() {
+        return Double.parseDouble(TextPrecio.getText());
+    }
+
+    public boolean isExento() {
+        return ButtonExento.isSelected();
+    }
+
+    public String getDescripcion() {
+    	return TextDescripcion.getText();
+    }
+    
+    public void addCrearProductoListener(ActionListener listener) {
+        BotonCrear.addActionListener(listener);
+    }
+
+    public void addProductoToTable(Productos producto) {
+        DefaultTableModel model = (DefaultTableModel) TablaProductos.getModel();
+        model.addRow(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio(), producto.getExento()});
+    }
+    
+    public void updateProductosTable(Productos[] productos) {
+        DefaultTableModel model = (DefaultTableModel) TablaProductos.getModel();
+        model.setRowCount(0);
+        for (Productos producto : productos) {
+            model.addRow(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio()});
+            }
+        }
+        
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Vista window = new Vista();
-					window.frmSistemaDeInventario.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Productos model = new Productos();
+                    Vista window = new Vista(model);
+                    window.frmSistemaDeInventario.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 	/**
 	 * Create the application.
 	 */
-	public Vista() {
-		initialize();
-	}
+	public Vista(Productos model) {
+        initialize();
+        controlador = new Controlador(this, model);
+        BotonCrear.addActionListener(controlador);
+    }
 
 	/**
 	 * Initialize the contents of the frame.
@@ -79,14 +135,33 @@ public class Vista {
 		frmSistemaDeInventario.getContentPane().add(scrollPane);
 		
 		TablaProductos = new JTable();
+		TablaProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		TablaProductos.setEnabled(true);
 		scrollPane.setViewportView(TablaProductos);
-		TablaProductos.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Codigo", "Nombre", "Cantidad", "Precio"
-			}
-		));
+		// Crear un modelo de tabla personalizado
+		DefaultTableModel model = new DefaultTableModel() {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        // Todas las celdas son no editables
+		        return false;
+		    }
+		};
+
+		// Añade las columnas a tu modelo
+		model.addColumn("Codigo");
+		model.addColumn("Nombre");
+		model.addColumn("Cantidad");
+		model.addColumn("Precio");
+
+		// Añade los datos a tu modelo
+		for (Productos producto : Productos.getListaProductos()) {
+		    model.addRow(new Object[] { producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio() });
+		}
+
+		// Aplica el modelo a tu tabla
+		TablaProductos.setModel(model);
+		
+		
 		
 		JLabel lblNewLabel = new JLabel("Codigo");
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -128,21 +203,83 @@ public class Vista {
 		TextPrecio.setBounds(516, 59, 96, 20);
 		frmSistemaDeInventario.getContentPane().add(TextPrecio);
 		
-		JRadioButton ButtonExento = new JRadioButton("Exento");
+		ButtonExento = new JRadioButton("Exento");
 		ButtonExento.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		ButtonExento.setBounds(21, 131, 111, 23);
+		ButtonExento.setBounds(657, 57, 111, 23);
 		frmSistemaDeInventario.getContentPane().add(ButtonExento);
 		
 		JLabel lblDescripcion = new JLabel("Descripcion");
 		lblDescripcion.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDescripcion.setBounds(21, 186, 92, 25);
+		lblDescripcion.setBounds(25, 124, 92, 25);
 		frmSistemaDeInventario.getContentPane().add(lblDescripcion);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(25, 222, 867, 68);
+		scrollPane_1.setBounds(25, 160, 867, 68);
 		frmSistemaDeInventario.getContentPane().add(scrollPane_1);
 		
-		JTextArea TextDescripcion = new JTextArea();
+		TextDescripcion = new JTextArea();
 		scrollPane_1.setViewportView(TextDescripcion);
+		
+		BotonCrear = new JButton("Crear Producto");
+		BotonCrear.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		BotonCrear.setBounds(25, 239, 850, 32);
+		frmSistemaDeInventario.getContentPane().add(BotonCrear);
+		
+		ButtonLimpiar = new JButton("Limpiar");
+		ButtonLimpiar.setBounds(803, 11, 89, 23);
+		frmSistemaDeInventario.getContentPane().add(ButtonLimpiar);
+		
+		
+		
+	}
+	
+	public JButton getButtonLimpiar() {
+	    return ButtonLimpiar;
+	}
+	
+	public JButton getBotonCrear() {
+		
+		return BotonCrear;
+	}
+	
+	public void MostrarError(String Mensaje) {
+        JOptionPane.showMessageDialog(null, Mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+	
+	public void LimpiarCampos() {
+	    TextCodigo.setText("");
+	    TextNombre.setText("");
+	    TextCantidad.setText("");
+	    TextPrecio.setText("");
+	    ButtonExento.setSelected(false);
+	    TextDescripcion.setText("");
+	}
+	
+	public void setCodigo(String codigo) {
+	    TextCodigo.setText(codigo);
+	}
+
+	public void setNombre(String nombre) {
+	    TextNombre.setText(nombre);
+	}
+
+	public void setCantidad(int cantidad) {
+	    TextCantidad.setText(String.valueOf(cantidad));
+	}
+
+	public void setPrecio(double precio) {
+	    TextPrecio.setText(String.valueOf(precio));
+	}
+
+	public void setExento(boolean exento) {
+	    ButtonExento.setSelected(exento);
+	}
+
+	public void setDescripcion(String descripcion) {
+	    TextDescripcion.setText(descripcion);
+	}
+	
+	public JTable getTablaProductos() {
+	    return TablaProductos;
 	}
 }
