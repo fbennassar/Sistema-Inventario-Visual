@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import javax.swing.JTable;
 
@@ -44,6 +45,15 @@ public class Controlador implements ActionListener {
      		        }
      		    }
      		});
+     		
+     		view.getBotonActualizar().addActionListener(new ActionListener() {
+     		    @Override
+     		    public void actionPerformed(ActionEvent e) {
+     		        actualizarProducto();
+     		    }
+     		});
+     		
+     		
     }
 
     public void crearProducto() {
@@ -77,6 +87,51 @@ public class Controlador implements ActionListener {
         view.addProductoToTable(NuevoProducto);
         // Aquí puedes agregar el nuevo producto a tu modelo
         model.NuevoProducto(NuevoProducto);
+    }
+    
+    public void actualizarProducto() {
+        int filaSeleccionada = view.getFilaSeleccionada();
+
+        if(filaSeleccionada != -1) {
+            String nombre = view.getNombre();
+            int cantidad = view.getCantidad();
+            double precio = view.getPrecio();
+            boolean exento = view.isExento();
+            String codigo = view.getCodigo();
+            String descripcion = view.getDescripcion();
+            
+            if(cantidad < 0) {
+                view.MostrarError("La cantidad no puede ser negativa");
+                return;
+            }
+            
+            List<Productos> listaProductos = model.getListaProductos();
+            for(int i = 0; i < listaProductos.size(); i++) {
+                if(i != filaSeleccionada && listaProductos.get(i).getCodigo().equals(codigo)) {
+                    view.MostrarError("Este codigo ya existe");
+                    return;
+                }
+            }
+            
+            if(precio <= 0) {
+                view.MostrarError("El precio debe ser mayor a $0");
+                return;
+            }
+
+            Productos producto = listaProductos.get(filaSeleccionada);
+            producto.setCodigo(codigo);
+            producto.setNombre(nombre);
+            producto.setCantidad(cantidad);
+            producto.setPrecio(precio);
+            producto.setExento(exento);
+            producto.setDescripcion(descripcion);
+
+            view.updateProductoInTable(producto, filaSeleccionada);
+            
+            view.deseleccionarFila();
+        } else {
+            view.MostrarError("No se seleccionó ningún producto");
+        }
     }
 
     @Override

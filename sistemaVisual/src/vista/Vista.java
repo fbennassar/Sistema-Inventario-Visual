@@ -43,6 +43,7 @@ public class Vista {
 	private JRadioButton ButtonExento;
 	private JButton ButtonLimpiar;
 	private JButton BotonCrear;
+	private JButton BotonActualizar;
 	private Controlador controlador;
 	
 	public String getCodigo() {
@@ -210,11 +211,11 @@ public class Vista {
 		
 		JLabel lblDescripcion = new JLabel("Descripcion");
 		lblDescripcion.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDescripcion.setBounds(25, 124, 92, 25);
+		lblDescripcion.setBounds(25, 100, 92, 25);
 		frmSistemaDeInventario.getContentPane().add(lblDescripcion);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(25, 160, 867, 68);
+		scrollPane_1.setBounds(25, 135, 867, 68);
 		frmSistemaDeInventario.getContentPane().add(scrollPane_1);
 		
 		TextDescripcion = new JTextArea();
@@ -222,12 +223,17 @@ public class Vista {
 		
 		BotonCrear = new JButton("Crear Producto");
 		BotonCrear.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		BotonCrear.setBounds(25, 239, 850, 32);
+		BotonCrear.setBounds(25, 214, 850, 32);
 		frmSistemaDeInventario.getContentPane().add(BotonCrear);
 		
 		ButtonLimpiar = new JButton("Limpiar");
 		ButtonLimpiar.setBounds(803, 11, 89, 23);
 		frmSistemaDeInventario.getContentPane().add(ButtonLimpiar);
+		
+		BotonActualizar = new JButton("Actualizar Producto");
+		BotonActualizar.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		BotonActualizar.setBounds(25, 255, 850, 32);
+		frmSistemaDeInventario.getContentPane().add(BotonActualizar);
 		
 		
 		
@@ -238,8 +244,11 @@ public class Vista {
 	}
 	
 	public JButton getBotonCrear() {
-		
 		return BotonCrear;
+	}
+	
+	public JButton getBotonActualizar() {
+		return BotonActualizar;
 	}
 	
 	public void MostrarError(String Mensaje) {
@@ -281,5 +290,23 @@ public class Vista {
 	
 	public JTable getTablaProductos() {
 	    return TablaProductos;
+	}
+	
+	public int getFilaSeleccionada() {
+	    return TablaProductos.getSelectedRow();
+	}
+	
+	public void updateProductoInTable(Productos producto, int fila) {
+	    if (fila != -1) {
+	        TablaProductos.setValueAt(producto.getCodigo(), fila, 0);
+	        TablaProductos.setValueAt(producto.getNombre(), fila, 1);
+	        TablaProductos.setValueAt(producto.getCantidad(), fila, 2);
+	        TablaProductos.setValueAt(producto.getPrecio(), fila, 3);
+	        // Actualiza también cualquier otra columna que necesites
+	    }
+	}
+	
+	public void deseleccionarFila() {
+	    TablaProductos.clearSelection();
 	}
 }
