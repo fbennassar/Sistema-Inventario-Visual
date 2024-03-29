@@ -10,6 +10,7 @@ public class Productos {
 	private Double Precio;
 	private Boolean Exento;
 	private String Descripcion;
+	private Double PrecioBs;
 	
 	private static ArrayList<Productos> ListaProductos = new ArrayList<Productos>();
 	
@@ -82,6 +83,14 @@ public class Productos {
 		Precio = precio;
 		Exento = exento;
 		setDescripcion(descripcion);
+		PrecioBs = precio;
+		
+		if(!Exento) {
+			
+			Double Resta = (Precio * 0.16); 
+			
+			Precio = (Precio + Resta);
+		}
 		
 	}
 	
@@ -92,6 +101,12 @@ public class Productos {
 	public void NuevoProducto(Productos producto) {
 		
 		getListaProductos().add(producto);
+	}
+	public Double getPrecioBs() {
+		return PrecioBs;
+	}
+	public void setPrecioBs(Double precioBs) {
+		PrecioBs = precioBs;
 	}
 	
 }

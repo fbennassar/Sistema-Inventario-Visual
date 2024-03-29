@@ -26,10 +26,12 @@ import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextArea;
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 
 import modelo.Productos;
 import controlador.Controlador;
+import javax.swing.JMenuItem;
 
 public class Vista {
 
@@ -44,6 +46,9 @@ public class Vista {
 	private JButton ButtonLimpiar;
 	private JButton BotonCrear;
 	private JButton BotonActualizar;
+	private JMenuItem TasaCambio;
+	private JButton Dolares;
+	private JButton Bolivares;
 	private Controlador controlador;
 	
 	public String getCodigo() {
@@ -74,9 +79,9 @@ public class Vista {
         BotonCrear.addActionListener(listener);
     }
 
-    public void addProductoToTable(Productos producto) {
+    public void addProductoToTable(Object[] producto) {
         DefaultTableModel model = (DefaultTableModel) TablaProductos.getModel();
-        model.addRow(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio(), producto.getExento()});
+        model.addRow(producto);
     }
     
     public void updateProductosTable(Productos[] productos) {
@@ -124,11 +129,14 @@ public class Vista {
 		JMenuBar menuBar = new JMenuBar();
 		frmSistemaDeInventario.setJMenuBar(menuBar);
 		
-		JMenu mnNewMenu = new JMenu("Archivo");
-		menuBar.add(mnNewMenu);
+		JMenu MenuArchivo = new JMenu("Archivo");
+		menuBar.add(MenuArchivo);
 		
-		JMenu mnNewMenu_1 = new JMenu("Ayuda");
-		menuBar.add(mnNewMenu_1);
+		JMenu MenuAyuda = new JMenu("Ayuda");
+		menuBar.add(MenuAyuda);
+		
+		TasaCambio = new JMenuItem("Tasa de cambio");
+		MenuAyuda.add(TasaCambio);
 		frmSistemaDeInventario.getContentPane().setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -139,7 +147,7 @@ public class Vista {
 		TablaProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		TablaProductos.setEnabled(true);
 		scrollPane.setViewportView(TablaProductos);
-		// Crear un modelo de tabla personalizado
+		// Tabla personalizada
 		DefaultTableModel model = new DefaultTableModel() {
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
@@ -184,7 +192,7 @@ public class Vista {
 		lblNewLabel_1_1.setBounds(344, 30, 96, 14);
 		frmSistemaDeInventario.getContentPane().add(lblNewLabel_1_1);
 		
-		JLabel lblNewLabel_1_2 = new JLabel("Precio");
+		JLabel lblNewLabel_1_2 = new JLabel("Precio ($)");
 		lblNewLabel_1_2.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblNewLabel_1_2.setBounds(516, 30, 96, 14);
 		frmSistemaDeInventario.getContentPane().add(lblNewLabel_1_2);
@@ -211,11 +219,11 @@ public class Vista {
 		
 		JLabel lblDescripcion = new JLabel("Descripcion");
 		lblDescripcion.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		lblDescripcion.setBounds(25, 100, 92, 25);
+		lblDescripcion.setBounds(25, 84, 92, 25);
 		frmSistemaDeInventario.getContentPane().add(lblDescripcion);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(25, 135, 867, 68);
+		scrollPane_1.setBounds(25, 109, 867, 68);
 		frmSistemaDeInventario.getContentPane().add(scrollPane_1);
 		
 		TextDescripcion = new JTextArea();
@@ -223,7 +231,7 @@ public class Vista {
 		
 		BotonCrear = new JButton("Crear Producto");
 		BotonCrear.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		BotonCrear.setBounds(25, 214, 850, 32);
+		BotonCrear.setBounds(25, 188, 850, 32);
 		frmSistemaDeInventario.getContentPane().add(BotonCrear);
 		
 		ButtonLimpiar = new JButton("Limpiar");
@@ -232,8 +240,16 @@ public class Vista {
 		
 		BotonActualizar = new JButton("Actualizar Producto");
 		BotonActualizar.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		BotonActualizar.setBounds(25, 255, 850, 32);
+		BotonActualizar.setBounds(25, 231, 850, 32);
 		frmSistemaDeInventario.getContentPane().add(BotonActualizar);
+		
+		Dolares = new JButton("$");
+		Dolares.setBounds(733, 274, 89, 23);
+		frmSistemaDeInventario.getContentPane().add(Dolares);
+		
+		Bolivares = new JButton("Bs");
+		Bolivares.setBounds(634, 274, 89, 23);
+		frmSistemaDeInventario.getContentPane().add(Bolivares);
 		
 		
 		
@@ -308,5 +324,18 @@ public class Vista {
 	
 	public void deseleccionarFila() {
 	    TablaProductos.clearSelection();
+	}
+
+	public JMenuItem getTasaCambio() {
+		// TODO Auto-generated method stub
+		return TasaCambio;
+	}
+	
+	public JButton getBolivares() {
+		return Bolivares;
+	}
+	
+	public JButton getDolares() {
+		return Dolares;
 	}
 }
