@@ -109,4 +109,9 @@ public class Productos {
 		PrecioBs = precioBs;
 	}
 	
+	@Override
+	public String toString() {
+	    return getCodigo() + "," + getNombre() + "," + getCantidad() + "," + getPrecio() + "," + getExento() + "," + getDescripcion();
+	}
+	
 }

@@ -49,6 +49,9 @@ public class Vista {
 	private JMenuItem TasaCambio;
 	private JButton Dolares;
 	private JButton Bolivares;
+	private JMenuItem AcercaDe;
+	private JButton ButtonGuardar;
+	private JMenuItem GuardarArchivo;
 	private Controlador controlador;
 	
 	public String getCodigo() {
@@ -91,6 +94,8 @@ public class Vista {
             model.addRow(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio()});
             }
         }
+    
+
         
 	/**
 	 * Launch the application.
@@ -126,17 +131,25 @@ public class Vista {
 		frmSistemaDeInventario.setBounds(100, 100, 916, 555);
 		frmSistemaDeInventario.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+
+		
 		JMenuBar menuBar = new JMenuBar();
 		frmSistemaDeInventario.setJMenuBar(menuBar);
 		
 		JMenu MenuArchivo = new JMenu("Archivo");
 		menuBar.add(MenuArchivo);
 		
+		GuardarArchivo = new JMenuItem("Guardar Archivo");
+		MenuArchivo.add(GuardarArchivo);
+		
 		JMenu MenuAyuda = new JMenu("Ayuda");
 		menuBar.add(MenuAyuda);
 		
 		TasaCambio = new JMenuItem("Tasa de cambio");
 		MenuAyuda.add(TasaCambio);
+		
+		AcercaDe = new JMenuItem("Acerca de");
+		MenuAyuda.add(AcercaDe);
 		frmSistemaDeInventario.getContentPane().setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -251,6 +264,10 @@ public class Vista {
 		Bolivares.setBounds(634, 274, 89, 23);
 		frmSistemaDeInventario.getContentPane().add(Bolivares);
 		
+		ButtonGuardar = new JButton("Guardar");
+		ButtonGuardar.setBounds(803, 41, 89, 23);
+		frmSistemaDeInventario.getContentPane().add(ButtonGuardar);
+		
 		
 		
 	}
@@ -331,11 +348,23 @@ public class Vista {
 		return TasaCambio;
 	}
 	
+	public JMenuItem getAcercaDe() {
+		return AcercaDe;
+	}
+	
 	public JButton getBolivares() {
 		return Bolivares;
 	}
 	
 	public JButton getDolares() {
 		return Dolares;
+	}
+	
+	public JButton getButtonGuardar() {
+		return ButtonGuardar;
+	}
+	
+	public JMenuItem getGuardarArchivo() {
+		return GuardarArchivo;
 	}
 }

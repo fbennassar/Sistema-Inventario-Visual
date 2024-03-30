@@ -4,6 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -20,11 +24,12 @@ public class Controlador implements ActionListener {
     private Productos model;
     private static Double TasaCambio = 38.0;
     private boolean isConvertedToBs = false;
+    
+    private List<Productos> TablaTemporal = new ArrayList<>();
 
     public Controlador(Vista view, Productos model) {
         this.view = view;
         this.model = model;
-
         
         this.view.getButtonLimpiar().addActionListener(new ActionListener() {
             @Override
@@ -125,6 +130,27 @@ public class Controlador implements ActionListener {
 
                 // Marcar que ya hemos convertido a dólares
                 isConvertedToBs = false;
+            }
+        });
+        
+        this.view.getAcercaDe().addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		JOptionPane.showMessageDialog(null, "Nombre: Francisco Bennassar" + "\nCédula: 30.474.123");
+
+        	}
+        });
+        
+        this.view.getButtonGuardar().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GuardarTabla();
+            }
+        });
+        
+        this.view.getGuardarArchivo().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guardarArchivo();
             }
         });
         
@@ -262,6 +288,30 @@ public class Controlador implements ActionListener {
             view.deseleccionarFila();
         } else {
             view.MostrarError("No se seleccionó ningún producto");
+        }
+    }
+    
+    public void GuardarTabla() {
+        TablaTemporal.clear();  // Clear the temporary table
+
+        for (Productos producto : model.getListaProductos()) {
+            TablaTemporal.add(producto);  // Add the product to the temporary table
+        }
+        
+        JOptionPane.showMessageDialog(null, "Guardado exitoso");
+    }
+    
+    public void guardarArchivo() {
+    	
+    	String NombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre de archivo");
+        try (PrintWriter out = new PrintWriter(new FileWriter("C:\\Users\\TECNO\\Desktop\\" + NombreArchivo + ".txt"))) {
+            for (Productos producto : TablaTemporal) {
+                out.println(producto.getCodigo() + "," + producto.getNombre() + "," + producto.getCantidad() + "," + producto.getPrecio() + "," + producto.getExento() + "," + producto.getDescripcion());
+            }
+            
+            JOptionPane.showMessageDialog(null, "Archivo creado exitosamente");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
