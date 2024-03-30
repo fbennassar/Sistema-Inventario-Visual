@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -154,6 +156,13 @@ public class Controlador implements ActionListener {
             }
         });
         
+        this.view.getAbrirArchivo().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LeerArchivo();
+            }
+        });
+        
      // Agregar MouseListener para la funcionalidad de doble clic
      		view.getTablaProductos().addMouseListener(new MouseAdapter() {
      		    public void mouseClicked(MouseEvent e) {
@@ -185,11 +194,16 @@ public class Controlador implements ActionListener {
     public void crearProducto() {
         String codigo = view.getCodigo();
         String nombre = view.getNombre();
-        int cantidad = view.getCantidad();
-        double precio = view.getPrecio();
+        Integer cantidad = view.getCantidad();
+        Double precio = view.getPrecio();
         boolean exento = view.isExento();
         String descripcion = view.getDescripcion();
 
+        if (codigo.isEmpty() || nombre.isEmpty() || descripcion.isEmpty() || precio == null || cantidad == null) {
+        	view.MostrarError("Todos los campos deben estar llenos");
+        	return;
+        }
+        
         if(cantidad < 0) {
             view.MostrarError("La cantidad no puede ser negativa");
             return;
@@ -206,6 +220,7 @@ public class Controlador implements ActionListener {
             view.MostrarError("El precio debe ser mayor a $0");
             return;
         }
+        
         
         // Crear un nuevo producto con los valores obtenidos de la vista
         Productos NuevoProducto = new Productos(codigo, nombre, cantidad, precio, exento, descripcion);
@@ -312,6 +327,36 @@ public class Controlador implements ActionListener {
             JOptionPane.showMessageDialog(null, "Archivo creado exitosamente");
         } catch (IOException e) {
             e.printStackTrace();
+            view.MostrarError("Se produjo un error");
+        }
+    }
+    
+    public void LeerArchivo() {
+    	
+    	String NombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre de archivo");
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\TECNO\\Desktop\\" + NombreArchivo + ".txt"))) {
+            String line;
+            model.clearProductos();  // Clear the list of products
+            view.clearTablaProductos();  // Clear the table in the view
+
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String codigo = parts[0];
+                String nombre = parts[1];
+                int cantidad = Integer.parseInt(parts[2]);
+                double precio = Double.parseDouble(parts[3]);
+                boolean exento = Boolean.parseBoolean(parts[4]);
+                String descripcion = parts[5];
+
+                Productos producto = new Productos(codigo, nombre, cantidad, precio, exento, descripcion, false);
+                model.NuevoProducto(producto);  // Add the product to the list of products
+
+                // Add the product to the table in the view
+                view.addProductoToTable(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio(), producto.getExento(), producto.getDescripcion()});
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            view.MostrarError("Archivo no encontrado");
         }
     }
 

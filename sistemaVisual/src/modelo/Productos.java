@@ -94,6 +94,21 @@ public class Productos {
 		
 	}
 	
+	public Productos(String codigo, String nombre, Integer cantidad, Double precio, Boolean exento, String descripcion, boolean aplicarIVA) {
+	    Codigo = codigo;
+	    Nombre = nombre;
+	    Cantidad = cantidad;
+	    Precio = precio;
+	    Exento = exento;
+	    setDescripcion(descripcion);
+	    PrecioBs = precio;
+
+	    if (aplicarIVA && !Exento) {
+	        Double Resta = (Precio * 0.16); 
+	        Precio = (Precio + Resta);
+	    }
+	}
+	
 	/**
 	 * Coloca un nuevo producto en el arraylist
 	 * @param producto
@@ -102,6 +117,7 @@ public class Productos {
 		
 		getListaProductos().add(producto);
 	}
+	
 	public Double getPrecioBs() {
 		return PrecioBs;
 	}
@@ -114,4 +130,7 @@ public class Productos {
 	    return getCodigo() + "," + getNombre() + "," + getCantidad() + "," + getPrecio() + "," + getExento() + "," + getDescripcion();
 	}
 	
+	public void clearProductos() {
+        ListaProductos.clear();
+    }
 }

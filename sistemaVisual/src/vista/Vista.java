@@ -53,6 +53,7 @@ public class Vista {
 	private JButton ButtonGuardar;
 	private JMenuItem GuardarArchivo;
 	private Controlador controlador;
+	private JMenuItem AbrirArchivo;
 	
 	public String getCodigo() {
         return TextCodigo.getText();
@@ -141,6 +142,9 @@ public class Vista {
 		
 		GuardarArchivo = new JMenuItem("Guardar Archivo");
 		MenuArchivo.add(GuardarArchivo);
+		
+		AbrirArchivo = new JMenuItem("Abrir Archivo");
+		MenuArchivo.add(AbrirArchivo);
 		
 		JMenu MenuAyuda = new JMenu("Ayuda");
 		menuBar.add(MenuAyuda);
@@ -367,4 +371,13 @@ public class Vista {
 	public JMenuItem getGuardarArchivo() {
 		return GuardarArchivo;
 	}
+	
+	public JMenuItem getAbrirArchivo() {
+		return AbrirArchivo;
+	}
+	
+    public void clearTablaProductos() {
+        DefaultTableModel dtm = (DefaultTableModel) TablaProductos.getModel();
+        dtm.setRowCount(0);
+    }
 }
