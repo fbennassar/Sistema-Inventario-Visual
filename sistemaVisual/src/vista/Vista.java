@@ -164,29 +164,26 @@ public class Vista {
 		TablaProductos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		TablaProductos.setEnabled(true);
 		scrollPane.setViewportView(TablaProductos);
-		// Tabla personalizada
+		
+		// Aqui creo una tabla personalizada para que las celdas NO sean editables
 		DefaultTableModel model = new DefaultTableModel() {
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
-		        // Todas las celdas son no editables
+		        
 		        return false;
 		    }
 		};
-
-		// Añade las columnas a tu modelo
+		
 		model.addColumn("Codigo");
 		model.addColumn("Nombre");
 		model.addColumn("Cantidad");
 		model.addColumn("Precio");
 
-		// Añade los datos a tu modelo
 		for (Productos producto : Productos.getListaProductos()) {
 		    model.addRow(new Object[] { producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio() });
 		}
 
-		// Aplica el modelo a tu tabla
 		TablaProductos.setModel(model);
-		
 		
 		
 		JLabel lblNewLabel = new JLabel("Codigo");
@@ -339,7 +336,6 @@ public class Vista {
 	        TablaProductos.setValueAt(producto.getNombre(), fila, 1);
 	        TablaProductos.setValueAt(producto.getCantidad(), fila, 2);
 	        TablaProductos.setValueAt(producto.getPrecio(), fila, 3);
-	        // Actualiza también cualquier otra columna que necesites
 	    }
 	}
 	
@@ -348,7 +344,6 @@ public class Vista {
 	}
 
 	public JMenuItem getTasaCambio() {
-		// TODO Auto-generated method stub
 		return TasaCambio;
 	}
 	

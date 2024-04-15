@@ -43,7 +43,7 @@ public class Controlador implements ActionListener {
         this.view.getTasaCambio().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
-                // Mostrar un cuadro de diálogo con la tasa de cambio actual y preguntar si se quiere modificar
+                // Muestra un cuadro de diálogo con la tasa de cambio actual y preguntar si se quiere modificar
                 Object[] options = {"Modificar", "Cancelar"};
                 int option = JOptionPane.showOptionDialog(null, "La tasa de cambio actual es: " + TasaCambio + ". ¿Desea modificarla?", "Tasa de cambio", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
@@ -71,15 +71,9 @@ public class Controlador implements ActionListener {
                     return;
                 }
 
-                // Obtener la tasa de cambio
-                double tasaDeCambio = 0; // TODO: reemplazar con la tasa de cambio actual
+                List<Productos> ListaProductos = model.getListaProductos();
 
-                // Obtener la lista de productos
-                List<Productos> listaProductos = model.getListaProductos();
-
-                // Iterar sobre cada producto
-                for (Productos producto : listaProductos) {
-                    // Actualizar el precio del producto según la tasa de cambio
+                for (Productos producto : ListaProductos) {
                     double nuevoPrecio = producto.getPrecio() * TasaCambio;
                     producto.setPrecioBs(nuevoPrecio);
                 }
@@ -87,13 +81,13 @@ public class Controlador implements ActionListener {
                 // Actualizar la tabla
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTablaProductos().getModel();
                 tableModel.setRowCount(0); // Limpiar la tabla
-                for (Productos producto : listaProductos) {
+                for (Productos producto : ListaProductos) {
                     // Añadir cada producto a la tabla
                     Object[] rowData = new Object[] {
                         producto.getCodigo(),
                         producto.getNombre(),
                         producto.getCantidad(),
-                        "Bs " + producto.getPrecioBs(), // Mostrar el precio en Bs
+                        "Bs " + producto.getPrecioBs(),
                         producto.getExento(),
                         producto.getDescripcion()
                     };
@@ -112,18 +106,17 @@ public class Controlador implements ActionListener {
                     return;
                 }
 
-                List<Productos> listaProductos = model.getListaProductos();
+                List<Productos> ListaProductos = model.getListaProductos();
 
-                // Actualizar la tabla
+                
                 DefaultTableModel tableModel = (DefaultTableModel) view.getTablaProductos().getModel();
-                tableModel.setRowCount(0); // Limpiar la tabla
-                for (Productos producto : listaProductos) {
-                    // Añadir cada producto a la tabla
+                tableModel.setRowCount(0); 
+                for (Productos producto : ListaProductos) {
                     Object[] rowData = new Object[] {
                         producto.getCodigo(),
                         producto.getNombre(),
                         producto.getCantidad(),
-                        "$ " + producto.getPrecio(), // Mostrar el precio en dólares
+                        "$ " + producto.getPrecio(),
                         producto.getExento(),
                         producto.getDescripcion()
                     };
@@ -163,7 +156,7 @@ public class Controlador implements ActionListener {
             }
         });
         
-     // Agregar MouseListener para la funcionalidad de doble clic
+     // MouseListener lo use para que detecte el doble clic
      		view.getTablaProductos().addMouseListener(new MouseAdapter() {
      		    public void mouseClicked(MouseEvent e) {
      		        if (e.getClickCount() == 2) {
@@ -222,21 +215,18 @@ public class Controlador implements ActionListener {
         }
         
         
-        // Crear un nuevo producto con los valores obtenidos de la vista
         Productos NuevoProducto = new Productos(codigo, nombre, cantidad, precio, exento, descripcion);
 
-        // Agregar el símbolo de la moneda al precio antes de agregarlo a la tabla
         Object[] rowData = new Object[] {
             NuevoProducto.getCodigo(),
             NuevoProducto.getNombre(),
             NuevoProducto.getCantidad(),
-            (isConvertedToBs ? "Bs " : "$ ") + (isConvertedToBs ? NuevoProducto.getPrecioBs() : NuevoProducto.getPrecio()), // Mostrar el precio en Bs o en dólares dependiendo del estado
+            (isConvertedToBs ? "Bs " : "$ ") + (isConvertedToBs ? NuevoProducto.getPrecioBs() : NuevoProducto.getPrecio()),
             NuevoProducto.getExento(),
             NuevoProducto.getDescripcion()
         };
         view.addProductoToTable(rowData);
-
-        // Aquí puedes agregar el nuevo producto a tu modelo
+        
         model.NuevoProducto(NuevoProducto);
     }
     
@@ -284,16 +274,14 @@ public class Controlador implements ActionListener {
             producto.setExento(Exento);
             producto.setDescripcion(Descripcion);
 
-         // Actualizar la tabla
             DefaultTableModel tableModel = (DefaultTableModel) view.getTablaProductos().getModel();
-            tableModel.setRowCount(0); // Limpiar la tabla
+            tableModel.setRowCount(0);
             for (Productos productoActualizado : listaProductos) {
-                // Añadir cada producto a la tabla
                 Object[] rowData = new Object[] {
                     productoActualizado.getCodigo(),
                     productoActualizado.getNombre(),
                     productoActualizado.getCantidad(),
-                    (isConvertedToBs ? "Bs " : "$ ") + (isConvertedToBs ? productoActualizado.getPrecioBs() : productoActualizado.getPrecio()), // Mostrar el precio en Bs o en dólares dependiendo del estado
+                    (isConvertedToBs ? "Bs " : "$ ") + (isConvertedToBs ? productoActualizado.getPrecioBs() : productoActualizado.getPrecio()),
                     productoActualizado.getExento(),
                     productoActualizado.getDescripcion()
                 };
@@ -307,23 +295,28 @@ public class Controlador implements ActionListener {
     }
     
     public void GuardarTabla() {
-        TablaTemporal.clear();  // Clear the temporary table
+        TablaTemporal.clear();  // Limpia la tabla temporal/borrador
 
         for (Productos producto : model.getListaProductos()) {
-            TablaTemporal.add(producto);  // Add the product to the temporary table
+            TablaTemporal.add(producto);
         }
         
         JOptionPane.showMessageDialog(null, "Guardado exitoso");
     }
     
     public void guardarArchivo() {
-    	
-    	String NombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre de archivo");
-        try (PrintWriter out = new PrintWriter(new FileWriter("C:\\Users\\TECNO\\Desktop\\" + NombreArchivo + ".txt"))) {
+        String NombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre de archivo");
+
+        // Salir si el nombre del archivo es null o está vacío
+        if (NombreArchivo == null || NombreArchivo.trim().isEmpty()) {
+            return;
+        }
+
+        try (PrintWriter out = new PrintWriter(new FileWriter("C:\\Users\\franb\\OneDrive\\Desktop\\" + NombreArchivo + ".txt"))) {
             for (Productos producto : TablaTemporal) {
                 out.println(producto.getCodigo() + "," + producto.getNombre() + "," + producto.getCantidad() + "," + producto.getPrecio() + "," + producto.getExento() + "," + producto.getDescripcion());
             }
-            
+
             JOptionPane.showMessageDialog(null, "Archivo creado exitosamente");
         } catch (IOException e) {
             e.printStackTrace();
@@ -334,10 +327,10 @@ public class Controlador implements ActionListener {
     public void LeerArchivo() {
     	
     	String NombreArchivo = JOptionPane.showInputDialog("Ingrese el nombre de archivo");
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\TECNO\\Desktop\\" + NombreArchivo + ".txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\franb\\OneDrive\\Desktop\\" + NombreArchivo + ".txt"))) {
             String line;
-            model.clearProductos();  // Clear the list of products
-            view.clearTablaProductos();  // Clear the table in the view
+            model.clearProductos(); 
+            view.clearTablaProductos();
 
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -349,9 +342,8 @@ public class Controlador implements ActionListener {
                 String descripcion = parts[5];
 
                 Productos producto = new Productos(codigo, nombre, cantidad, precio, exento, descripcion, false);
-                model.NuevoProducto(producto);  // Add the product to the list of products
+                model.NuevoProducto(producto); 
 
-                // Add the product to the table in the view
                 view.addProductoToTable(new Object[]{producto.getCodigo(), producto.getNombre(), producto.getCantidad(), producto.getPrecio(), producto.getExento(), producto.getDescripcion()});
             }
         } catch (IOException e) {
